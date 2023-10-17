@@ -36,8 +36,6 @@ st.markdown(f'<p style="color:darkblue;font-size:16px;">Your Style, Perfected: U
 
 cwdir=os.getcwd()
 
-fig, axes = plt.subplots(1, 5, figsize=(20, 5))
-
 _success_text_upload = "File was uploaded successfully!"
 
 
@@ -99,8 +97,8 @@ for _folder in [_filelocation]:
 # Category list
 image_pth_catalog = 'Catalog'
 _filelocation = os.path.join(cwdir, image_pth_catalog)
-_category_list = [ 'bag', 'shoes', 'top', 'outwear', 'pants', 'eyewear', 'dress',  'skirt', 'watches', 'hats',
-                   'earrings', 'rings',  'bracelet', 'necklace']
+_category_list = [ 'bag', 'shoes', 'top', 'outwear', 'pants', 'eyewear', 'earrings', 'watches', 'hats',
+                   'rings',  'bracelet', 'necklace',  'dress',  'skirt']
 
 # Category Folder
 df_category_all = {}
@@ -144,7 +142,7 @@ def show_catalog(category_input,_label):
 
 
 
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(_category_list[:6])
+tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs(_category_list[:8])
 
 with tab1:
     img1 = show_catalog(0, "Choose a bag from existing catalog")
@@ -169,6 +167,14 @@ with tab5:
 with tab6:
     img6 = show_catalog(5, "Choose an eye wear from existing catalog")
     st.session_state['catalog_image6'] = img6
+
+with tab7:
+    img7 = show_catalog(6, "Choose an ear ring from existing catalog")
+    st.session_state['catalog_image7'] = img7
+
+with tab8:
+    img8 = show_catalog(7, "Choose a watch from existing catalog")
+    st.session_state['catalog_image8'] = img8
 
 # Option to Upload Images
 

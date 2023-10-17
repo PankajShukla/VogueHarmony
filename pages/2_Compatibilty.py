@@ -6,6 +6,11 @@ def install(package):
 
 install('streamlit-image-select')
 
+# def install(package):
+#     subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+#
+# install('tensorflow')
+
 import streamlit as st
 import streamlit.components.v1 as components
 from streamlit_image_select import image_select
@@ -21,6 +26,20 @@ import random
 import glob
 import shutil
 
+
+
+import numpy as np
+import json
+import math
+
+import tensorflow as tf
+from tensorflow import keras
+from keras import models
+from keras.layers import TimeDistributed
+from keras.layers import Conv2D, BatchNormalization, MaxPooling2D, GlobalMaxPool2D
+from keras.layers import GRU, Dense, Dropout, Flatten
+from keras.layers import LSTM
+from keras.models import load_model
 
 
 st.set_page_config(
@@ -80,12 +99,15 @@ for _folder in [_filelocation]:
         df_placeholder = pd.concat([df_placeholder, pd.DataFrame(data)])
 
 
-img1 = st.session_state['catalog_image1']
-img2 = st.session_state['catalog_image2']
-img3 = st.session_state['catalog_image3']
-img4 = st.session_state['catalog_image4']
-img5 = st.session_state['catalog_image5']
-img6 = st.session_state['catalog_image6']
+user_selected_image_list = [st.session_state['catalog_image1'],
+                            st.session_state['catalog_image2'],
+                            st.session_state['catalog_image3'],
+                            st.session_state['catalog_image4'],
+                            st.session_state['catalog_image5'],
+                            st.session_state['catalog_image6'],
+                            st.session_state['catalog_image7'],
+                            st.session_state['catalog_image8']
+                            ]
 
 # Option to Upload Images
 
@@ -104,42 +126,94 @@ st.markdown(text_upload, unsafe_allow_html=True)
 uploaded_cnt=0
 
 
-fig_, axes_ = plt.subplots(1, 6, figsize=(20, 4))
+fig_, axes_ = plt.subplots(1, 8, figsize=(20, 4))
 plt.rcParams["figure.autolayout"] = True
 
 
-axes_[0].imshow(mpimg.imread(img1))
-axes_[0].set_title('outfit ' + str(1))
-axes_[0].axis('off')
-
-
-axes_[1].imshow(mpimg.imread(img2))
-axes_[1].set_title('outfit ' + str(2))
-axes_[1].axis('off')
-
-
-axes_[2].imshow(mpimg.imread(img3))
-axes_[2].set_title('outfit ' + str(3))
-axes_[2].axis('off')
-
-
-axes_[3].imshow(mpimg.imread(img4))
-axes_[3].set_title('outfit ' + str(4))
-axes_[3].axis('off')
-
-
-axes_[4].imshow(mpimg.imread(img5))
-axes_[4].set_title('outfit ' + str(5))
-axes_[4].axis('off')
-
-
-axes_[5].imshow(mpimg.imread(img6))
-axes_[5].set_title('outfit ' + str(6))
-axes_[5].axis('off')
-
+for ax_i in range(8):
+    axes_[ax_i].imshow(mpimg.imread(user_selected_image_list[ax_i]))
+    axes_[ax_i].set_title('outfit ' + str(ax_i+1))
+    axes_[ax_i].axis('off')
 
 st.pyplot(fig_)
 
+
+
+
+def convert_image_to_array(input_img_list):
+
+    df_temp = {'item_image_1': [input_img_list[0]],
+               'item_image_2': [input_img_list[1]],
+               'item_image_3': [input_img_list[2]],
+               'item_image_4': [input_img_list[3]],
+               'item_image_5': [input_img_list[4]],
+               'item_image_6': [input_img_list[5]],
+               'item_image_7': [input_img_list[6]],
+               'item_image_8': [input_img_list[7]]
+               }
+
+    dataset = pd.DataFrame(df_temp)
+
+    outfit_list = []
+
+    column_index = len(dataset.columns) - 1
+    valid_image_count = 0
+    dummy_image_count = 0
+    rpg_slash_const = "RGB"
+
+    blank_image_array = np.zeros((250, 250, 3), dtype = np.uint8)
+    blank_image = Image.fromarray(blank_image_array)
+    blank_image = blank_image.resize((250, 250), Image.LANCZOS)
+
+    for index, row in dataset.iterrows():
+        outfit_data = []
+
+        for item_count in range(1, 9):
+          try:
+            image_path = dataset['item_image_'+str(item_count)].unique()[0]
+            image = Image.open(image_path).convert(rpg_slash_const)
+            image = image.resize((250, 250), Image.LANCZOS)
+            valid_image_count = valid_image_count + 1
+          except:
+            image = blank_image
+            dummy_image_count = dummy_image_count + 1
+          datu = np.asarray(image)
+          normu_dat = datu/255
+          outfit_data.append(normu_dat)
+
+        outfit_data = np.array(outfit_data)
+        outfit_list.append(outfit_data)
+
+    print("Num of real images = ", valid_image_count)
+    print("Num of dummy images = ", dummy_image_count)
+
+    return np.array(outfit_list)
+
+
+def CNN_LSTM_score_prediction(user_selected_image_list):
+
+    # Create Unseen data in input format
+    df_unseen_data = convert_image_to_array(user_selected_image_list)
+
+    # Load Model
+    modelpath = 'model_compatibility_score/cnn_lstm_model_new3.h5'
+    filepath1 = os.path.join(cwdir, 'model', modelpath)
+    model_CNN_LSTM = load_model(filepath1)
+
+    # Predict Compatibility
+    predicted_probability = model_CNN_LSTM.predict(df_unseen_data, verbose=0)
+
+    predicted_score = np.argmax(predicted_probability)
+
+    print(predicted_probability)
+    print(predicted_score)
+
+
+    return predicted_score
+
+
+
+score = CNN_LSTM_score_prediction(user_selected_image_list)
 
 
 
@@ -173,12 +247,4 @@ if uploaded_cnt==0:
 
 else:
     st.write('Please Upload all 5 images!')
-
-
-
-
-
-
-
-
 
