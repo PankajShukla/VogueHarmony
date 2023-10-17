@@ -3,12 +3,14 @@ import subprocess
 import sys
 import pip
 
+pip.main(['install', '--upgrade', 'pip'])
+
 def install(package):
     subprocess.check_call([sys.executable, "-m", "pip", "install", package])
 
 install('streamlit-image-select')
 
-pip.main(['install', '--upgrade', 'pip'])
+
 
 import streamlit as st
 import streamlit.components.v1 as components
