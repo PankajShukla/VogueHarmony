@@ -5,6 +5,11 @@ import pip
 
 pip.main(['install', '--upgrade', 'pip'])
 
+def install(package):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+
+install('matplotlib')
+
 
 import streamlit as st
 import streamlit.components.v1 as components
