@@ -1,4 +1,4 @@
-
+!pip install streamlit-image-select
 import streamlit as st
 import streamlit.components.v1 as components
 from streamlit_image_select import image_select
