@@ -213,7 +213,7 @@ def CNN_LSTM_score_prediction(user_selected_image_list):
 
 
 
-score = CNN_LSTM_score_prediction(user_selected_image_list)
+# score = CNN_LSTM_score_prediction(user_selected_image_list)
 
 
 
