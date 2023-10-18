@@ -8,7 +8,8 @@ install('streamlit-image-select')
 
 import streamlit as st
 import streamlit.components.v1 as components
-from streamlit_image_select import image_select
+import streamlit_image_select
+
 
 from PIL import Image
 import os
@@ -128,7 +129,7 @@ def show_catalog(category_input,_label):
     df_temp_['image_path'] = df_temp_['path'] + '/' + df_temp_['image']
     _img_file_ = list(df_temp_['image_path'].unique())
 
-    img = image_select(
+    img = streamlit_image_select.image_select(
         label=_label,
         images=_img_file_,
         use_container_width=False,

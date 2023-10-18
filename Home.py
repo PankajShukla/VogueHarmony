@@ -12,6 +12,7 @@ install('streamlit-image-select')
 
 import streamlit as st
 import streamlit.components.v1 as components
+import streamlit_image_select
 
 from PIL import Image
 import os
