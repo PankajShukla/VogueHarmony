@@ -87,15 +87,8 @@ for _folder in [_filelocation]:
         df_placeholder = pd.concat([df_placeholder, pd.DataFrame(data)])
 
 
-user_selected_image_list = [st.session_state['catalog_image1'],
-                            st.session_state['catalog_image2'],
-                            st.session_state['catalog_image3'],
-                            st.session_state['catalog_image4'],
-                            st.session_state['catalog_image5'],
-                            st.session_state['catalog_image6'],
-                            st.session_state['catalog_image7'],
-                            st.session_state['catalog_image8']
-                            ]
+user_selected_image_list = st.session_state['selected_images']
+_category_list = st.session_state['category_list']
 
 # Option to Upload Images
 
@@ -114,16 +107,30 @@ st.markdown(text_upload, unsafe_allow_html=True)
 uploaded_cnt=0
 
 
-fig_, axes_ = plt.subplots(1, 8, figsize=(20, 4))
+col_, row_ = 5, 2
+fig_, axes_ = plt.subplots(row_, col_, figsize = (16, 5))
 plt.rcParams["figure.autolayout"] = True
 
+placeholder_image = os.path.join(df_placeholder.path.unique()[0], df_placeholder.image.unique()[0])
 
-for ax_i in range(8):
-    axes_[ax_i].imshow(mpimg.imread(user_selected_image_list[ax_i]))
-    axes_[ax_i].set_title('outfit ' + str(ax_i+1))
-    axes_[ax_i].axis('off')
+i = 0
+for pos_row in range(row_):
+    for pos_col in range(col_):
+        try:
+            axes_[pos_row][pos_col].imshow(mpimg.imread(user_selected_image_list[i]))
+            axes_[pos_row][pos_col].set_title(str(_category_list[i]))
+            axes_[pos_row][pos_col].axis('off')
+
+        except:
+            axes_[pos_row][pos_col].imshow(mpimg.imread(placeholder_image))
+            axes_[pos_row][pos_col].set_title('')
+            axes_[pos_row][pos_col].axis('off')
+
+        i = i+1
 
 st.pyplot(fig_)
+
+
 
 
 

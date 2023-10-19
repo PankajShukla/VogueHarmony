@@ -136,42 +136,68 @@ def show_catalog(category_input,_label):
 
 
 
+
+user_selected_image_list = ['']*8
+
 tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs(_category_list[:8])
+
+st.session_state['category_list'] = _category_list[:8]
 
 with tab1:
     img1 = show_catalog(0, "Choose a bag from existing catalog")
-    st.session_state['catalog_image1'] = img1
+    user_selected_image_list[0] = img1
 
 with tab2:
     img2 = show_catalog(1, "Choose a shoe from existing catalog")
-    st.session_state['catalog_image2'] = img2
+    user_selected_image_list[1] = img2
 
 with tab3:
     img3 = show_catalog(2, "Choose a top from existing catalog")
-    st.session_state['catalog_image3'] = img3
+    user_selected_image_list[2] = img3
 
 with tab4:
     img4 = show_catalog(3, "Choose an outer wear from existing catalog")
-    st.session_state['catalog_image4'] = img4
+    user_selected_image_list[3] = img4
 
 with tab5:
     img5 = show_catalog(4, "Choose a pants from existing catalog")
-    st.session_state['catalog_image5'] = img5
+    user_selected_image_list[4] = img5
 
 with tab6:
     img6 = show_catalog(5, "Choose an eye wear from existing catalog")
-    st.session_state['catalog_image6'] = img6
+    user_selected_image_list[5] = img6
 
 with tab7:
     img7 = show_catalog(6, "Choose an ear ring from existing catalog")
-    st.session_state['catalog_image7'] = img7
+    user_selected_image_list[6] = img7
 
 with tab8:
     img8 = show_catalog(7, "Choose a watch from existing catalog")
-    st.session_state['catalog_image8'] = img8
+    user_selected_image_list[7] = img8
 
 # Option to Upload Images
 
 _success_text_upload = "File was uploaded successfully!"
 
 
+st.session_state['selected_images'] = user_selected_image_list
+
+
+col_, row_ = 4, 2
+fig_1, axes_1 = plt.subplots(col_, row_, figsize=(4, 8))
+plt.rcParams["figure.autolayout"] = True
+
+
+i = 0
+for pos_col in range(col_):
+    for pos_row in range(row_):
+        axes_1[pos_col][pos_row].imshow(mpimg.imread(user_selected_image_list[i]))
+        axes_1[pos_col][pos_row].set_title(str(_category_list[i]))
+        axes_1[pos_col][pos_row].axis('off')
+        i = i+1
+
+
+snapshot_text = '<center><p style=color:darkblue; font-size: 10px;">outfit selection snapshot</p></center>'
+st.sidebar.markdown(snapshot_text, unsafe_allow_html=True)
+
+st.sidebar.pyplot(fig_1)
