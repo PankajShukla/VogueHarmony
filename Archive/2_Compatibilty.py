@@ -106,7 +106,6 @@ st.markdown(text_upload, unsafe_allow_html=True)
 
 uploaded_cnt=0
 
-
 col_, row_ = 5, 2
 fig_, axes_ = plt.subplots(row_, col_, figsize = (16, 5))
 plt.rcParams["figure.autolayout"] = True

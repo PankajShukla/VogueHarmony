@@ -17,7 +17,7 @@ import shutil
 
 
 st.set_page_config(
-    page_title="Best Match",
+    page_title="BestMatch",
     layout="wide"
 )
 
@@ -134,60 +134,6 @@ for pos_row in range(row_):
 st.pyplot(fig_)
 
 
-
-#
-# fig_, axes_ = plt.subplots(1, 7, figsize=(20, 5))
-# plt.rcParams["figure.autolayout"] = True
-#
-#
-# axes_[0].imshow(mpimg.imread(img1))
-# axes_[0].set_title('outfit ' + str(1))
-# axes_[0].axis('off')
-#
-#
-# axes_[1].imshow(mpimg.imread(img2))
-# axes_[1].set_title('outfit ' + str(2))
-# axes_[1].axis('off')
-#
-#
-# axes_[2].imshow(mpimg.imread(img3))
-# axes_[2].set_title('outfit ' + str(3))
-# axes_[2].axis('off')
-#
-#
-# axes_[3].imshow(mpimg.imread(img4))
-# axes_[3].set_title('outfit ' + str(4))
-# axes_[3].axis('off')
-#
-#
-# axes_[4].imshow(mpimg.imread(img5))
-# axes_[4].set_title('outfit ' + str(5))
-# axes_[4].axis('off')
-#
-#
-# axes_[5].imshow(mpimg.imread(img6))
-# axes_[5].set_title('outfit ' + str(6))
-# axes_[5].axis('off')
-#
-#
-# axes_[6].imshow(mpimg.imread(_img_file))
-# axes_[6].set_title('outfit ' + str(7))
-# axes_[6].set_xticklabels([])
-# axes_[6].set_yticklabels([])
-#
-# axes_[6].set_xticks([])
-# axes_[6].set_yticks([])
-#
-# axes_[6].spines['bottom'].set_color('red')
-# axes_[6].spines['top'].set_color('red')
-# axes_[6].spines['left'].set_color('red')
-# axes_[6].spines['right'].set_color('red')
-#
-#
-#
-# st.pyplot(fig_)
-#
-#
 
 """
 ------------------------------------------------------------------------------------
