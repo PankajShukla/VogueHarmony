@@ -191,38 +191,45 @@ def CNN_LSTM_score_prediction(user_selected_image_list):
     df_unseen_data = convert_image_to_array(user_selected_image_list)
 
     # Load Model
-    modelpath = 'model_compatibility_score/cnn_lstm_model_new3.h5'
-    filepath1 = os.path.join(cwdir, 'model', modelpath)
-    model_CNN_LSTM = load_model(filepath1)
+    filepath1 = os.path.join(cwdir, 'model/model_compatibility_score')
+
+    modelFileList = []
+    for modelFile in os.listdir(filepath1):
+        if modelFile.find('h5') > -1:
+            modelFileList.append(modelFile)
+
+    modelFileList = sorted(modelFileList)
+    modelFile = modelFileList[-1]
+
+    model_CNN_LSTM = load_model(os.path.join(filepath1, modelFile))
 
     # Predict Compatibility
     predicted_probability = model_CNN_LSTM.predict(df_unseen_data, verbose=0)
 
     predicted_score = np.argmax(predicted_probability)
 
-    print(predicted_probability)
-    print(predicted_score)
+    st.write("Probability : ", predicted_probability)
+    st.write("Predicted Score : ", predicted_score)
 
 
     return predicted_score
 
 
-
-# score = CNN_LSTM_score_prediction(user_selected_image_list)
-
+score = CNN_LSTM_score_prediction(user_selected_image_list)
 
 
 if uploaded_cnt==0:
 
-    rating = random.randint(1,10)
+    rating = random.randint(1,4)
+    rating = score
     compatibility = 'NA'
 
-    if rating <= 4:
+    if rating ==0:
         compatibility ='Low compatibility'
         _status_color = 'red'
         _nextstep = 'You may consider modifying the outfit.'
 
-    elif rating <= 7:
+    elif rating <= 1:
         compatibility ='Medium compatibility'
         _status_color = 'blue'
         _nextstep = 'You are okay to proceed.'
