@@ -31,7 +31,7 @@ from keras.models import load_model
 
 
 st.set_page_config(
-    page_title="AI",
+    page_title="Compatibility",
     layout="wide"
 )
 

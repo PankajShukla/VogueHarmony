@@ -17,7 +17,7 @@ import shutil
 
 
 st.set_page_config(
-    page_title="Complete Outfit",
+    page_title="Best Match",
     layout="wide"
 )
 
@@ -82,7 +82,7 @@ st.markdown(text_upload, unsafe_allow_html=True)
 
 
 col_, row_ = 5, 2
-fig_, axes_ = plt.subplots(row_, col_, figsize = (12, 5))
+fig_, axes_ = plt.subplots(row_, col_, figsize = (16, 5))
 plt.rcParams["figure.autolayout"] = True
 
 placeholder_image = os.path.join(df_placeholder.path.unique()[0], df_placeholder.image.unique()[0])
