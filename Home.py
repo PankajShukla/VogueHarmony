@@ -1,7 +1,7 @@
 
 import streamlit as st
 import streamlit.components.v1 as components
-import streamlit_image_select
+from streamlit_image_select import image_select
 
 from PIL import Image
 import os
@@ -64,27 +64,9 @@ gif_list = gif_list[:3]
 
 col1, col2, col3 = st.columns(3)
 
-col1.markdown("""
-<html><body>
-<iframe src={gif} width="400" height="300" frameBorder="0" class="giphy-embed" allowFullScreen>
-</iframe>
-</body></html>
-""".format(gif=gif_list[0]), unsafe_allow_html=True)
-
-
-col2.markdown("""
-<html><body>
-<iframe src={gif} width="400" height="300" frameBorder="0" class="giphy-embed" allowFullScreen>
-</iframe>
-</body></html>
-""".format(gif=gif_list[1]), unsafe_allow_html=True)
-
-col3.markdown("""
-<html><body>
-<iframe src={gif} width="400" height="300" frameBorder="0" class="giphy-embed" allowFullScreen>
-</iframe>
-</body></html>
-""".format(gif=gif_list[2]), unsafe_allow_html=True)
+col1.markdown("""<html><body><iframe src={gif} width="500" height="300" frameBorder="0" class="giphy-embed" allowFullScreen></iframe></body></html>""".format(gif=gif_list[0]), unsafe_allow_html=True)
+col2.markdown("""<html><body><iframe src={gif} width="500" height="300" frameBorder="0" class="giphy-embed" allowFullScreen></iframe></body></html>""".format(gif=gif_list[1]), unsafe_allow_html=True)
+col3.markdown("""<html><body><iframe src={gif} width="500" height="300" frameBorder="0" class="giphy-embed" allowFullScreen></iframe></body></html>""".format(gif=gif_list[2]), unsafe_allow_html=True)
 
 
 
@@ -95,7 +77,7 @@ col3.markdown("""
 """
 
 
-st.markdown(f'<center><p style="background-color:orange;color:white;font-size:20px;"><b> 3 Simple steps to get the best outfit for yourself </b>  </p></center>',
+st.markdown(f'<center><p style="background-color:#daa520;color:white;font-size:20px;"><b> 3 Simple steps to get the best outfit for yourself </b>  </p></center>',
             unsafe_allow_html=True)
 
 
@@ -173,71 +155,12 @@ with col14:
 
 st.markdown(f'<br><br>', unsafe_allow_html=True)
 
-
-# st.markdown(f'<center><p style="background-color:orange;color:white;font-size:20px;"><b><a style= "text-decoration: none;color: white" href="/Catalog" target="_self" >Go to Catalog</a></b></p></center>', unsafe_allow_html=True)
-#
-#
-#
-#
-# cwdir=os.getcwd()
-# _success_text_upload = "File was uploaded successfully!"
-#
-# # Upload Folder
-# image_pth = 'Upload'
-# _filelocation = os.path.join(cwdir, image_pth)
-#
-# df_upload = pd.DataFrame(columns=['image', 'path'])
-#
-# for _folder in [_filelocation]:
-#     imglist_upload = os.listdir(_folder)
-#     for _img in imglist_upload:
-#         data = {'image': [_img], 'path': [_folder]}
-#         df_upload = pd.concat([df_upload, pd.DataFrame(data)])
-#
-#
-#
-# df_temp_ = df_upload.copy(deep=True)
-# df_temp_['image_path'] = df_temp_['path'] + '/' + df_temp_['image']
-# _img_file_ = list(df_temp_['image_path'].unique())[:45]
-#
-#
-# col_, row_ = 15, 3
-# fig_, axes_ = plt.subplots(row_, col_, figsize = (15, 5))
-# plt.rcParams["figure.autolayout"] = True
-#
-# i = 0
-# for pos_row in range(row_):
-#     for pos_col in range(col_):
-#         axes_[pos_row][pos_col].imshow(mpimg.imread(_img_file_[i]))
-#         axes_[pos_row][pos_col].axis('off')
-#         i = i+1
-#
-# st.pyplot(fig_)
-
-# st.markdown(f'<center><p style="background-color:orange;color:white;font-size:2px;"><b><a style= "text-decoration: none;color: orange" href="/Catalog" target="_self" >-</a></b></p></center>', unsafe_allow_html=True)
-
-
-
-
-
-
-
-
-
-
-"""
-------------------------------------------------------------------------------------
-"""
-
-
-
+st.markdown(f'<center><p style="background-color:#daa520;color:white;font-size:20px;"><b> Catalog and Compatibility </b>  </p></center>',
+            unsafe_allow_html=True)
+st.markdown(f'<br>', unsafe_allow_html=True)
 
 
 cwdir=os.getcwd()
-_success_text_upload = "File was uploaded successfully!"
-
-
-
 # Upload Folder
 image_pth = 'Upload'
 _filelocation = os.path.join(cwdir, image_pth)
@@ -280,6 +203,45 @@ for _folder in [_filelocation]:
         data = {'image': [_img], 'path': [_folder]}
         df_placeholder = pd.concat([df_placeholder, pd.DataFrame(data)])
 
+placeholder_image = os.path.join(df_placeholder.path.unique()[0], df_placeholder.image.unique()[0])
+
+
+# Default Catalog Folder
+
+image_pth = 'DefaultCatalog'
+_filelocation = os.path.join(cwdir, image_pth)
+
+df_default = pd.DataFrame(columns=['image', 'path'])
+
+for _folder in [_filelocation]:
+    imglist_default = os.listdir(_folder)
+    print(_folder, ": ", len(imglist_default))
+    for _img in imglist_default:
+        data = {'image': [_img], 'path': [_folder]}
+        df_default = pd.concat([df_default, pd.DataFrame(data)])
+
+
+default_catalog_image = os.path.join(df_default.path.unique()[0], df_default.image.unique()[0])
+
+
+
+
+# Black Image Folder for Model Input
+
+image_pth = 'BlackImage'
+_filelocation = os.path.join(cwdir, image_pth)
+
+df_black = pd.DataFrame(columns=['image', 'path'])
+
+for _folder in [_filelocation]:
+    imglist_black = os.listdir(_folder)
+    print(_folder, ": ", len(imglist_black))
+    for _img in imglist_black:
+        data = {'image': [_img], 'path': [_folder]}
+        df_black = pd.concat([df_black, pd.DataFrame(data)])
+
+
+black_image = os.path.join(df_black.path.unique()[0], df_black.image.unique()[0])
 
 
 
@@ -289,20 +251,24 @@ _filelocation = os.path.join(cwdir, image_pth_catalog)
 _category_list = [ 'bag', 'shoes', 'top', 'outwear', 'pants', 'eyewear', 'earrings', 'watches', 'hats',
                    'rings',  'bracelet', 'necklace',  'dress',  'skirt']
 
+
+
+
 # Category Folder
 df_category_all = {}
+num_of_images_in_each_catalog=14
 i=0
 for cat in _category_list:
     _filelocation = os.path.join(cwdir, image_pth_catalog, cat)
     df_category = pd.DataFrame(columns=['image', 'path'])
-
+    df_category = pd.concat([df_category, df_default])
     for _folder in [_filelocation]:
         imglist_category = os.listdir(_folder)
         for _img in imglist_category:
             data = {'image': [_img], 'path': [_folder]}
             df_category = pd.concat([df_category, pd.DataFrame(data)])
 
-    df_category_all[i] = df_category.head(24)
+    df_category_all[i] = df_category.head(num_of_images_in_each_catalog)
     i=i+1
 
 
@@ -317,98 +283,99 @@ def show_catalog(category_input,_label):
     df_temp_['image_path'] = df_temp_['path'] + '/' + df_temp_['image']
     _img_file_ = list(df_temp_['image_path'].unique())
 
-    img = streamlit_image_select.image_select(
+    img = image_select(
         label=_label,
         images=_img_file_,
         use_container_width=False,
 
     )
-    # st.image(img)
     return img
 
 
 
 
 
-col0, col1 = st.columns(2)
-
 user_selected_image_list = ['']*8
+
+col0, col1 = st.columns(2)
 
 tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs(_category_list[:8])
 
-st.session_state['category_list'] = _category_list[:8]
-
 with col0:
 
-    st.markdown(f'<br><br><br><br>', unsafe_allow_html=True)
+    st.markdown('<br><br><br><br><br>', unsafe_allow_html=True)
     browseText = '<p style="background-color:white;color:black; font-size: 20px;"><b>Browse Catalog</b></p>'
     st.markdown(browseText, unsafe_allow_html=True)
 
     st.markdown(
-        f'<p style="background-color:orange;font-size:2px;"><b><a style= color: orange" href="/Catalog" target="_self" >-</a></b></p></center>',
+        f'<p style="background-color:#daa520;font-size:2px;"><b><a style= color: #daa520" href="/Catalog" target="_self" >-</a></b></p></center>',
         unsafe_allow_html=True)
+
+
+    st.session_state['category_list'] = _category_list[:8]
 
     with tab1:
         img1 = show_catalog(0, "Choose a bag from existing catalog")
+        if img1 == default_catalog_image:
+            img1 = placeholder_image
         user_selected_image_list[0] = img1
 
     with tab2:
         img2 = show_catalog(1, "Choose a shoe from existing catalog")
+        if img2 == default_catalog_image:
+            img2 = placeholder_image
         user_selected_image_list[1] = img2
 
     with tab3:
         img3 = show_catalog(2, "Choose a top from existing catalog")
+        if img3 == default_catalog_image:
+            img3 = placeholder_image
         user_selected_image_list[2] = img3
 
     with tab4:
         img4 = show_catalog(3, "Choose an outer wear from existing catalog")
+        if img4 == default_catalog_image:
+            img4 = placeholder_image
         user_selected_image_list[3] = img4
 
     with tab5:
         img5 = show_catalog(4, "Choose a pants from existing catalog")
+        if img5 == default_catalog_image:
+            img5 = placeholder_image
         user_selected_image_list[4] = img5
 
     with tab6:
         img6 = show_catalog(5, "Choose an eye wear from existing catalog")
+        if img6 == default_catalog_image:
+            img6 = placeholder_image
         user_selected_image_list[5] = img6
 
     with tab7:
         img7 = show_catalog(6, "Choose an ear ring from existing catalog")
+        if img7 == default_catalog_image:
+            img7 = placeholder_image
         user_selected_image_list[6] = img7
 
     with tab8:
         img8 = show_catalog(7, "Choose a watch from existing catalog")
+        if img8 == default_catalog_image:
+            img8 = placeholder_image
         user_selected_image_list[7] = img8
 
-    st.session_state['selected_images'] = user_selected_image_list
 
 
-# with col1:
-#
-#     col_, row_ = 2, 4
-#     fig_1, axes_1 = plt.subplots(col_, row_, figsize=(4, 4))
-#     plt.rcParams["figure.autolayout"] = True
-#
-#     _size=100
-#
-#     i = 0
-#     for pos_col in range(col_):
-#         for pos_row in range(row_):
-#             axes_1[pos_col][pos_row].imshow(Image.open(user_selected_image_list[i]).resize((_size, _size)))
-#             axes_1[pos_col][pos_row].set_title(str(_category_list[i]))
-#             axes_1[pos_col][pos_row].axis('off')
-#             i = i+1
-#
-#
-#     snapshot_text = '<center><p style=color:darkblue; font-size: 10px;">outfit selection snapshot</p></center>'
-#     st.markdown(snapshot_text, unsafe_allow_html=True)
-#
-#     st.pyplot(fig_1)
+    st.session_state['catalog_images_list'] = user_selected_image_list
+
+    model_input_selected_image_list = user_selected_image_list[:8]
+
+    for i in range(len(model_input_selected_image_list)):
+        if model_input_selected_image_list[i] == placeholder_image:
+            model_input_selected_image_list[i] = black_image
+
+
 
 
 with col1:
-
-
 
     col_, row_ = 1, 8
     fig_1, axes_1 = plt.subplots(col_, row_, figsize=(20, 3))
@@ -419,8 +386,6 @@ with col1:
     i = 0
     for pos_col in range(row_):
         axes_1[pos_col].imshow(mpimg.imread(user_selected_image_list[i]))
-        # axes_1[pos_col].set_title(str(_category_list[i]))
-        # axes_1[pos_col].axis('off')
         axes_1[pos_col].set_xticklabels([])
         axes_1[pos_col].set_yticklabels([])
 
@@ -434,13 +399,9 @@ with col1:
         i = i+1
 
 
-    # snapshot_text = '<center><p style=color:darkblue; font-size: 10px;">outfit selection snapshot</p></center>'
     snapshot_text = '<p style="background-color:#efffff;color:darkblue; font-size: 14px;">The selected outfit items which show up here </p>'
     st.markdown(snapshot_text, unsafe_allow_html=True)
-
     st.pyplot(fig_1)
-
-
 
 
 
@@ -497,10 +458,10 @@ with col1:
 
 
 
-    def CNN_LSTM_score_prediction(user_selected_image_list):
+    def CNN_LSTM_score_prediction(model_input_selected_image_list):
 
         # Create Unseen data in input format
-        df_unseen_data = convert_image_to_array(user_selected_image_list)
+        df_unseen_data = convert_image_to_array(model_input_selected_image_list)
 
         # Load Model
         filepath1 = os.path.join(cwdir, 'model/model_compatibility_score')
@@ -512,6 +473,7 @@ with col1:
 
         modelFileList = sorted(modelFileList)
         modelFile = modelFileList[-1]
+        # st.write(modelFile)
 
         model_CNN_LSTM = load_model(os.path.join(filepath1, modelFile))
 
@@ -519,6 +481,26 @@ with col1:
         predicted_probability = model_CNN_LSTM.predict(df_unseen_data, verbose=0)
 
         predicted_score = np.argmax(predicted_probability)
+
+        df_probability = pd.DataFrame(predicted_probability)
+        # st.write(df_probability)
+        label0 = df_probability.iloc[0, 0]
+        label1 = df_probability.iloc[0, 1]
+        label2 = df_probability.iloc[0, 2]
+        label3 = df_probability.iloc[0, 3]
+        cumscore123 = label1 + label2 + label3
+        cumscore12  = label1 + label2
+
+        # st.write(label0, label1, label2, label2)
+
+        if cumscore12 >= 0.3:
+            predicted_score = 1
+        elif cumscore12 >= 0.4:
+            predicted_score = 2
+        elif cumscore12 >= 0.4 and cumscore123 >= 0.5:
+            predicted_score = 3
+        else:
+            predicted_score = 0
 
         # st.write("Probability : ", predicted_probability)
         # st.write("Predicted Score : ", predicted_score)
@@ -529,25 +511,23 @@ with col1:
 
 
     score = CNN_LSTM_score_prediction(user_selected_image_list)
+    rating = random.randint(1, 4)
+    rating = score
 
     uploaded_cnt = 0
 
     if uploaded_cnt == 0:
 
-        rating = random.randint(1, 4)
-        rating = score
         compatibility = 'NA'
-
-        rating = 1
 
         if rating == 0:
             compatibility = 'Low compatibility'
             _status_color = 'red'
             _nextstep = 'You may consider modifying the outfit'
 
-        elif rating <= 1:
+        elif rating <= 2:
             compatibility = 'Medium compatibility'
-            _status_color = 'darkblue'
+            _status_color = '#014f86'
             _nextstep = 'You are okay to proceed'
 
         else:
@@ -568,12 +548,6 @@ with col1:
                 f'<center><p style="background-color:{_status_color};color:white;font-size:12px;"> {compatibility}. {_nextstep} </p></center>'.format(
                     _status_color, compatibility, _nextstep), unsafe_allow_html=True)
 
-        # with col02:
-        #     st.markdown(
-        #         f'<center><p style="background-color:orange;color:white;font-size:14px;"><b><a style= "text-decoration: none;color: white" href="http://localhost:8502/Best_Match" target="_self" >Match an item with current outfit</a></b></p></center>',
-        #         unsafe_allow_html=True)
-        #
-
 
     else:
         st.write('Please Upload all 5 images!')
@@ -585,9 +559,10 @@ with col1:
 # Below is the New Item Suggestion section
 
 
+st.markdown(f'<br><br>', unsafe_allow_html=True)
 
-
-
+st.markdown(f'<center><p style="background-color:#daa520;color:white;font-size:20px;"><b> Recommending a Best matching outfit item </b>  </p></center>',
+            unsafe_allow_html=True)
 
 # 9th Image
 df_temp = df_predict.copy(deep=True)
@@ -597,74 +572,88 @@ _img_file = random.sample(_img_file, len(_img_file))
 _img_file = _img_file[0]
 
 
-"""
-------------------------------------------------------------------------------------
-"""
 
-st.markdown(f'<br><br><br><br>', unsafe_allow_html=True)
+st.markdown(f'<br>', unsafe_allow_html=True)
 browseText = '<p style="background-color:white;color:black; font-size: 20px;"><b>New Item Recommendation</b></p>'
 st.markdown(browseText, unsafe_allow_html=True)
 
 st.markdown(
-    f'<p style="background-color:orange;font-size:2px;"><b><a style= color: orange" href="" target="_self" >-</a></b></p></center>',
+    f'<p style="background-color:#daa520;font-size:2px;"><b><a style= color: #daa520" href="" target="_self" >-</a></b></p></center>',
     unsafe_allow_html=True)
 
-text_upload = '<p style="background-color:#ffffef;color:darkblue; font-size: 18px;">We have Completed your outfit</p>'
-st.markdown(text_upload, unsafe_allow_html=True)
 
-
-
-col_, row_ = 5, 2
-fig_, axes_ = plt.subplots(row_, col_, figsize = (16, 5))
+col_, row_ = 9, 1
+fig_, axes_ = plt.subplots(row_, col_, figsize = (16, 4))
 plt.rcParams["figure.autolayout"] = True
 
-placeholder_image = os.path.join(df_placeholder.path.unique()[0], df_placeholder.image.unique()[0])
 
-
-def highlight_predicted_image(val_i, pos_row, pos_col):
+def highlight_predicted_image(val_i, pos_col):
 
     global axes_
     global _img_file
 
-    axes_[pos_row][pos_col].imshow(mpimg.imread(_img_file))
-    axes_[pos_row][pos_col].set_title('outfit ' + str(val_i+1))
+    axes_[pos_col].imshow(mpimg.imread(_img_file))
+    axes_[pos_col].set_title('recommended item')
 
-    axes_[pos_row][pos_col].set_xticklabels([])
-    axes_[pos_row][pos_col].set_yticklabels([])
+    axes_[pos_col].set_xticklabels([])
+    axes_[pos_col].set_yticklabels([])
 
-    axes_[pos_row][pos_col].set_xticks([])
-    axes_[pos_row][pos_col].set_yticks([])
+    axes_[pos_col].set_xticks([])
+    axes_[pos_col].set_yticks([])
 
-    axes_[pos_row][pos_col].spines['bottom'].set_color('red')
-    axes_[pos_row][pos_col].spines['top'].set_color('red')
-    axes_[pos_row][pos_col].spines['left'].set_color('red')
-    axes_[pos_row][pos_col].spines['right'].set_color('red')
+    axes_[pos_col].spines['bottom'].set_color('red')
+    axes_[pos_col].spines['top'].set_color('red')
+    axes_[pos_col].spines['left'].set_color('red')
+    axes_[pos_col].spines['right'].set_color('red')
 
 
 
 
 i = 0
-for pos_row in range(row_):
-    for pos_col in range(col_):
-        try:
-            axes_[pos_row][pos_col].imshow(mpimg.imread(user_selected_image_list[i]))
-            axes_[pos_row][pos_col].set_title(str(_category_list[i]))
-            axes_[pos_row][pos_col].axis('off')
 
-        except:
+for pos_col in range(col_):
+    try:
+        axes_[pos_col].imshow(mpimg.imread(user_selected_image_list[i]))
+        axes_[pos_col].set_title(str(_category_list[i]))
+        # axes_[pos_col].axis('off')
+        axes_[pos_col].set_xticklabels([])
+        axes_[pos_col].set_yticklabels([])
 
-            if i == 8:
-                highlight_predicted_image(i, pos_row, pos_col)
-            else:
-                axes_[pos_row][pos_col].imshow(mpimg.imread(placeholder_image))
-                axes_[pos_row][pos_col].set_title('')
-                axes_[pos_row][pos_col].axis('off')
+        axes_[pos_col].set_xticks([])
+        axes_[pos_col].set_yticks([])
 
-        i = i + 1
+        axes_[pos_col].spines['bottom'].set_color('lightgrey')
+        axes_[pos_col].spines['top'].set_color('lightgrey')
+        axes_[pos_col].spines['left'].set_color('lightgrey')
+        axes_[pos_col].spines['right'].set_color('lightgrey')
+
+    except:
+
+        if i == 8:
+            highlight_predicted_image(i, pos_col)
+        else:
+            axes_[pos_col].imshow(mpimg.imread(placeholder_image))
+            axes_[pos_col].set_title('')
+            axes_[pos_col].axis('off')
+
+    i = i + 1
 
 
 
 st.pyplot(fig_)
+
+
+st.markdown(f'<br>', unsafe_allow_html=True)
+
+st.markdown(
+    f'<p style="background-color:#daa520;font-size:2px;"><b><a style= color: #daa520" href="" target="_self" >-</a></b></p></center>',
+    unsafe_allow_html=True)
+
+
+col11, col12, col13, col14, col15, col16 = st.columns(6)
+with col11:
+    st.markdown(f'<center><p style="background-color:#ec4c8c;color:white;font-size:18px;"> Proceed to Check Out </p></center>',
+                unsafe_allow_html=True)
 
 
 
