@@ -29,7 +29,6 @@ from keras.layers import LSTM
 from keras.models import load_model
 
 
-
 st.set_page_config(
     page_title="Home",
     layout="wide"
@@ -37,6 +36,17 @@ st.set_page_config(
 
 st.markdown(f'<p style="background-color:#efffff;color:#153944;font-size:50px;border-radius:2%;">Vogue Harmony</p>', unsafe_allow_html=True)
 st.markdown(f'<p style="color:darkblue;font-size:16px;">Your Style, Perfected: Unleash the Power of Compatibility</p>', unsafe_allow_html=True)
+
+
+
+
+m = st.markdown("""
+<style>
+div.stButton > button:first-child {
+    background-color: #0099ff;
+    color:#ffffff;
+}
+</style>""", unsafe_allow_html=True)
 
 
 
@@ -77,10 +87,8 @@ col3.markdown("""<html><body><iframe src={gif} width="500" height="300" frameBor
 """
 
 
-st.markdown(f'<center><p style="background-color:#daa520;color:white;font-size:20px;"><b> 3 Simple steps to get the best outfit for yourself </b>  </p></center>',
+st.markdown(f'<center><p style="background-color:#ec4c8c;color:white;font-size:20px;"><b> 3 Simple steps to get the best outfit for yourself </b>  </p></center>',
             unsafe_allow_html=True)
-
-
 
 
 
@@ -154,8 +162,7 @@ with col14:
 
 
 st.markdown(f'<br><br>', unsafe_allow_html=True)
-
-st.markdown(f'<center><p style="background-color:#daa520;color:white;font-size:20px;"><b> Catalog and Compatibility </b>  </p></center>',
+st.markdown(f'<center><p style="background-color:#ec4c8c;color:white;font-size:20px;"><b> Catalog and Compatibility </b>  </p></center>',
             unsafe_allow_html=True)
 st.markdown(f'<br>', unsafe_allow_html=True)
 
@@ -248,15 +255,15 @@ black_image = os.path.join(df_black.path.unique()[0], df_black.image.unique()[0]
 # Category list
 image_pth_catalog = 'Catalog'
 _filelocation = os.path.join(cwdir, image_pth_catalog)
-_category_list = [ 'bag', 'shoes', 'top', 'outwear', 'pants', 'eyewear', 'earrings', 'watches', 'hats',
-                   'rings',  'bracelet', 'necklace',  'dress',  'skirt']
+_category_list = [ 'Bag', 'Shoe', 'Top', 'Outwear', 'Pant', 'Eyewear', 'Earring', 'Watch', 'Hat',
+                   'Ring',  'Bracelet', 'Necklace',  'Dress',  'Skirt']
 
 
 
 
 # Category Folder
 df_category_all = {}
-num_of_images_in_each_catalog=14
+num_of_images_in_each_catalog=28
 i=0
 for cat in _category_list:
     _filelocation = os.path.join(cwdir, image_pth_catalog, cat)
@@ -274,6 +281,23 @@ for cat in _category_list:
 
 
 
+# Predicted Category Folder
+df_category_all_predicted = {}
+num_of_images_in_each_catalog_predicted = 4
+i=0
+for cat in _category_list:
+    _filelocation = os.path.join(cwdir, image_pth_catalog, cat)
+    df_category_predicted = pd.DataFrame(columns=['image', 'path'])
+    for _folder in [_filelocation]:
+        imglist_category = os.listdir(_folder)
+        for _img in imglist_category:
+            data = {'image': [_img], 'path': [_folder]}
+            df_category_predicted = pd.concat([df_category_predicted, pd.DataFrame(data)])
+
+    df_category_all_predicted[i] = df_category_predicted.tail(num_of_images_in_each_catalog_predicted)
+    i=i+1
+
+
 
 # Catalog
 
@@ -281,15 +305,29 @@ def show_catalog(category_input,_label):
 
     df_temp_ = df_category_all[category_input].copy(deep=True)
     df_temp_['image_path'] = df_temp_['path'] + '/' + df_temp_['image']
-    _img_file_ = list(df_temp_['image_path'].unique())
+    _img_file_catalog = list(df_temp_['image_path'].unique())
 
     img = image_select(
         label=_label,
-        images=_img_file_,
-        use_container_width=False,
-
+        images=_img_file_catalog,
+        use_container_width=False
     )
     return img
+
+
+def show_predicted(category_input, _label):
+
+    df_temp_ = df_category_all_predicted[category_input].copy(deep=True)
+    df_temp_['image_path'] = df_temp_['path'] + '/' + df_temp_['image']
+    _img_file_predicted = list(df_temp_['image_path'].unique())[:4]
+
+    img = image_select(
+        label=_label,
+        images=_img_file_predicted,
+        use_container_width=False
+    )
+    return img
+
 
 
 
@@ -306,11 +344,7 @@ with col0:
     st.markdown('<br><br><br><br><br>', unsafe_allow_html=True)
     browseText = '<p style="background-color:white;color:black; font-size: 20px;"><b>Browse Catalog</b></p>'
     st.markdown(browseText, unsafe_allow_html=True)
-
-    st.markdown(
-        f'<p style="background-color:#daa520;font-size:2px;"><b><a style= color: #daa520" href="/Catalog" target="_self" >-</a></b></p></center>',
-        unsafe_allow_html=True)
-
+    st.markdown(f'<p style="background-color:#ec4c8c;font-size:2px;"><b><a style= color: #daa520" href="/Catalog" target="_self" >-</a></b></p></center>', unsafe_allow_html=True)
 
     st.session_state['category_list'] = _category_list[:8]
 
@@ -406,7 +440,6 @@ with col1:
 
 
 
-
     def convert_image_to_array(input_img_list):
 
         df_temp = {'item_image_1': [input_img_list[0]],
@@ -484,6 +517,7 @@ with col1:
 
         df_probability = pd.DataFrame(predicted_probability)
         # st.write(df_probability)
+
         label0 = df_probability.iloc[0, 0]
         label1 = df_probability.iloc[0, 1]
         label2 = df_probability.iloc[0, 2]
@@ -513,34 +547,37 @@ with col1:
     score = CNN_LSTM_score_prediction(user_selected_image_list)
     rating = random.randint(1, 4)
     rating = score
+    cat_num = (rating+1)*5
 
-    uploaded_cnt = 0
+    uploaded_cnt = len(list(set(model_input_selected_image_list)))-1
 
-    if uploaded_cnt == 0:
+    if uploaded_cnt >= 5 :
 
         compatibility = 'NA'
 
         if rating == 0:
             compatibility = 'Low compatibility'
             _status_color = 'red'
-            _nextstep = 'You may consider modifying the outfit'
+            _nextstep = 'Select another item.'
 
         elif rating <= 2:
             compatibility = 'Medium compatibility'
             _status_color = '#014f86'
-            _nextstep = 'You are okay to proceed'
+            _nextstep = 'You are okay to proceed.'
 
         else:
             compatibility = 'High compatibility'
             _status_color = 'green'
-            _nextstep = 'Please Proceed to Buy'
+            _nextstep = 'Please Proceed to Buy.'
 
 
         # st.write("Status: ", compatibility)
 
+
         col01, col02 = st.columns(2)
 
         with col01:
+
             compatibility_text = '<p style="color:DarkSlateBlue; font-size: 12px;"></p>'
             st.markdown(compatibility_text, unsafe_allow_html=True)
 
@@ -550,47 +587,12 @@ with col1:
 
 
     else:
-        st.write('Please Upload all 5 images!')
+        st.write('Please select atleast 8 outfit items to get compatibility score!')
 
 
 
 
-
-# Below is the New Item Suggestion section
-
-
-st.markdown(f'<br><br>', unsafe_allow_html=True)
-
-st.markdown(f'<center><p style="background-color:#daa520;color:white;font-size:20px;"><b> Recommending a Best matching outfit item </b>  </p></center>',
-            unsafe_allow_html=True)
-
-# 9th Image
-df_temp = df_predict.copy(deep=True)
-df_temp['image_path'] = df_temp['path'] + '/' + df_temp['image']
-_img_file = list(df_temp['image_path'].unique())
-_img_file = random.sample(_img_file, len(_img_file))
-_img_file = _img_file[0]
-
-
-
-st.markdown(f'<br>', unsafe_allow_html=True)
-browseText = '<p style="background-color:white;color:black; font-size: 20px;"><b>New Item Recommendation</b></p>'
-st.markdown(browseText, unsafe_allow_html=True)
-
-st.markdown(
-    f'<p style="background-color:#daa520;font-size:2px;"><b><a style= color: #daa520" href="" target="_self" >-</a></b></p></center>',
-    unsafe_allow_html=True)
-
-
-col_, row_ = 9, 1
-fig_, axes_ = plt.subplots(row_, col_, figsize = (16, 4))
-plt.rcParams["figure.autolayout"] = True
-
-
-def highlight_predicted_image(val_i, pos_col):
-
-    global axes_
-    global _img_file
+def highlight_predicted_image(val_i, pos_col, axes_, _img_file):
 
     axes_[pos_col].imshow(mpimg.imread(_img_file))
     axes_[pos_col].set_title('recommended item')
@@ -609,51 +611,81 @@ def highlight_predicted_image(val_i, pos_col):
 
 
 
-i = 0
 
-for pos_col in range(col_):
-    try:
-        axes_[pos_col].imshow(mpimg.imread(user_selected_image_list[i]))
-        axes_[pos_col].set_title(str(_category_list[i]))
-        # axes_[pos_col].axis('off')
-        axes_[pos_col].set_xticklabels([])
-        axes_[pos_col].set_yticklabels([])
+def outfit_summary_and_purchase(_predicted_image):
 
-        axes_[pos_col].set_xticks([])
-        axes_[pos_col].set_yticks([])
+    st.markdown(f'<br>', unsafe_allow_html=True)
+    browseText = '<p style="background-color:white;color:black; font-size: 20px;"><b>Outfit Summary</b></p>'
+    st.markdown(browseText, unsafe_allow_html=True)
+    st.markdown(
+        f'<p style="background-color:#ec4c8c;font-size:2px;"><b><a style= color: #daa520" href="" target="_self" >-</a></b></p></center>',
+        unsafe_allow_html=True)
 
-        axes_[pos_col].spines['bottom'].set_color('lightgrey')
-        axes_[pos_col].spines['top'].set_color('lightgrey')
-        axes_[pos_col].spines['left'].set_color('lightgrey')
-        axes_[pos_col].spines['right'].set_color('lightgrey')
+    col_, row_ = 9, 1
+    fig_, axes_ = plt.subplots(row_, col_, figsize=(16, 4))
+    plt.rcParams["figure.autolayout"] = True
 
-    except:
+    i = 0
 
-        if i == 8:
-            highlight_predicted_image(i, pos_col)
-        else:
-            axes_[pos_col].imshow(mpimg.imread(placeholder_image))
-            axes_[pos_col].set_title('')
-            axes_[pos_col].axis('off')
+    for pos_col in range(col_):
+        try:
+            axes_[pos_col].imshow(mpimg.imread(user_selected_image_list[i]))
+            axes_[pos_col].set_title(str(_category_list[i]))
+            # axes_[pos_col].axis('off')
+            axes_[pos_col].set_xticklabels([])
+            axes_[pos_col].set_yticklabels([])
 
-    i = i + 1
+            axes_[pos_col].set_xticks([])
+            axes_[pos_col].set_yticks([])
+
+            axes_[pos_col].spines['bottom'].set_color('lightgrey')
+            axes_[pos_col].spines['top'].set_color('lightgrey')
+            axes_[pos_col].spines['left'].set_color('lightgrey')
+            axes_[pos_col].spines['right'].set_color('lightgrey')
+
+        except:
+
+            if i == 8:
+                highlight_predicted_image(i, pos_col, axes_, _predicted_image)
+            else:
+                axes_[pos_col].imshow(mpimg.imread(placeholder_image))
+                axes_[pos_col].set_title('')
+                axes_[pos_col].axis('off')
+
+        i = i + 1
+
+    st.pyplot(fig_)
+
+    st.markdown(f'<br>', unsafe_allow_html=True)
+    st.markdown(
+        f'<p style="background-color:#ec4c8c;font-size:2px;"><b><a style= color: #daa520" href="" target="_self" >-</a></b></p></center>',
+        unsafe_allow_html=True)
+
+    col11, col12, col13, col14, col15, col16 = st.columns(6)
+    with col11:
+        st.markdown(
+            f'<center><p style="background-color:#ec4c8c;color:white;font-size:18px;"> Proceed to Check Out </p></center>',
+            unsafe_allow_html=True)
 
 
 
-st.pyplot(fig_)
+
+if uploaded_cnt >= 5:
+
+    # Below is the New Item Suggestion section
+
+    st.markdown(f'<br><br>', unsafe_allow_html=True)
+    st.markdown(f'<center><p style="background-color:#ec4c8c;color:white;font-size:20px;"><b> Recommending a Best matching outfit item </b>  </p></center>', unsafe_allow_html=True)
+
+    colpred1, colpred2 = st.columns(2)
+    # with colpred1:
+        # st.pyplot(fig_pred)
+    new_item_image = show_predicted(cat_num, "We have recommendeded Best four items for you which may go well with the chosen outfit. Please Choose one. ".format(_category_list[cat_num]))
+
+    predicted_image = new_item_image
+    outfit_summary_and_purchase(predicted_image)
 
 
-st.markdown(f'<br>', unsafe_allow_html=True)
-
-st.markdown(
-    f'<p style="background-color:#daa520;font-size:2px;"><b><a style= color: #daa520" href="" target="_self" >-</a></b></p></center>',
-    unsafe_allow_html=True)
-
-
-col11, col12, col13, col14, col15, col16 = st.columns(6)
-with col11:
-    st.markdown(f'<center><p style="background-color:#ec4c8c;color:white;font-size:18px;"> Proceed to Check Out </p></center>',
-                unsafe_allow_html=True)
 
 
 
