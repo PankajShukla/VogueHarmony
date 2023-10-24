@@ -498,7 +498,7 @@ with col1:
 
         # Load Model
         filepath1 = os.path.join(cwdir, 'model/model_compatibility_score')
-
+        st.write(filepath1)
         modelFileList = []
         for modelFile in os.listdir(filepath1):
             if modelFile.find('h5') > -1:
@@ -506,7 +506,7 @@ with col1:
 
         modelFileList = sorted(modelFileList)
         modelFile = modelFileList[-1]
-        # st.write(modelFile)
+        st.write(os.path.join(filepath1, modelFile))
 
         model_CNN_LSTM = load_model(os.path.join(filepath1, modelFile))
 
