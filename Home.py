@@ -553,7 +553,9 @@ with col1:
         st.write('Dummy results')
 
     rating = score
-    cat_num = (rating+1)*5
+
+    # dummy
+    cat_num = (rating+1)*3
 
     uploaded_cnt = len(list(set(model_input_selected_image_list)))-1
 
