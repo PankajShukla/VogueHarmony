@@ -555,7 +555,7 @@ with col1:
     rating = score
 
     # dummy
-    cat_num = (rating+1)*3
+    cat_num = (rating)*3
 
     uploaded_cnt = len(list(set(model_input_selected_image_list)))-1
 
