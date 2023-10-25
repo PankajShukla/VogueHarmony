@@ -595,7 +595,7 @@ with col1:
 
 
     else:
-        st.write('Please select atleast 8 outfit items to get compatibility score!')
+        st.write('Please select atleast 5 outfit items to get compatibility score!')
 
 
 
