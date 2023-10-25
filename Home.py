@@ -546,8 +546,12 @@ with col1:
 
 
 
-    score = CNN_LSTM_score_prediction(user_selected_image_list)
-    rating = random.randint(1, 4)
+    try:
+        score = CNN_LSTM_score_prediction(user_selected_image_list)
+    except:
+        score = random.randint(1, 4)
+        st.write('Dummy results')
+
     rating = score
     cat_num = (rating+1)*5
 
