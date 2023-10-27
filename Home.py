@@ -31,12 +31,13 @@ from keras.layers import LSTM
 from keras.models import load_model
 
 
+
 st.set_page_config(
     page_title="Home",
     layout="wide"
 )
 
-st.markdown(f'<p style="background-color:#efffff;color:#153944;font-size:50px;border-radius:2%;">Vogue Harmony</p>', unsafe_allow_html=True)
+st.markdown(f'<p style="background-color:#FFECF3;color:#ec4c8c;font-size:50px;border-radius:2%;">Vogue Harmony</p>', unsafe_allow_html=True)
 st.markdown(f'<p style="color:darkblue;font-size:16px;">Your Style, Perfected: Unleash the Power of Compatibility</p>', unsafe_allow_html=True)
 
 
@@ -169,87 +170,33 @@ st.markdown(f'<center><p style="background-color:#ec4c8c;color:white;font-size:2
 st.markdown(f'<br>', unsafe_allow_html=True)
 
 
+
 cwdir=os.getcwd()
-# Upload Folder
-image_pth = 'Upload'
-_filelocation = os.path.join(cwdir, image_pth)
+user_selected_image_list = ['']*8
 
-df_upload = pd.DataFrame(columns=['image', 'path'])
-
-for _folder in [_filelocation]:
-    imglist_upload = os.listdir(_folder)
-    for _img in imglist_upload:
-        data = {'image': [_img], 'path': [_folder]}
-        df_upload = pd.concat([df_upload, pd.DataFrame(data)])
-
-
-
-# Predict Folder
-image_pth = 'Predict'
-_filelocation = os.path.join(cwdir, image_pth)
-
-df_predict = pd.DataFrame(columns=['image', 'path'])
-
-for _folder in [_filelocation]:
-    imglist_predict = os.listdir(_folder)
-    print(_folder, ": ", len(imglist_predict))
-    for _img in imglist_predict:
-        data = {'image': [_img], 'path': [_folder]}
-        df_predict = pd.concat([df_predict, pd.DataFrame(data)])
+@st.cache_data
+def read_folder_images(cwdir, foldername):
+    _filelocation = os.path.join(cwdir, foldername)
+    df_imagefolder = pd.DataFrame(columns=['image', 'path'])
+    for _folder in [_filelocation]:
+        _imglist_upload = os.listdir(_folder)
+        for _img in _imglist_upload:
+            if _img.find('png') > -1 or _img.find('jpeg') > -1 or _img.find('jpg') > -1:
+                data = {'image': [_img], 'path': [_folder]}
+                df_imagefolder = pd.concat([df_imagefolder, pd.DataFrame(data)])
+    return df_imagefolder
 
 
-# Placeholder Folder
 
-image_pth = 'Placeholder'
-_filelocation = os.path.join(cwdir, image_pth)
 
-df_placeholder = pd.DataFrame(columns=['image', 'path'])
-
-for _folder in [_filelocation]:
-    imglist_placeholder = os.listdir(_folder)
-    print(_folder, ": ", len(imglist_placeholder))
-    for _img in imglist_placeholder:
-        data = {'image': [_img], 'path': [_folder]}
-        df_placeholder = pd.concat([df_placeholder, pd.DataFrame(data)])
+df_upload = read_folder_images(cwdir, foldername='Upload')
+df_predict = read_folder_images(cwdir, foldername='Predict')
+df_placeholder = read_folder_images(cwdir, foldername='Placeholder')
+df_default = read_folder_images(cwdir, foldername='DefaultCatalog')
+df_black = read_folder_images(cwdir, foldername='BlackImage')
 
 placeholder_image = os.path.join(df_placeholder.path.unique()[0], df_placeholder.image.unique()[0])
-
-
-# Default Catalog Folder
-
-image_pth = 'DefaultCatalog'
-_filelocation = os.path.join(cwdir, image_pth)
-
-df_default = pd.DataFrame(columns=['image', 'path'])
-
-for _folder in [_filelocation]:
-    imglist_default = os.listdir(_folder)
-    print(_folder, ": ", len(imglist_default))
-    for _img in imglist_default:
-        data = {'image': [_img], 'path': [_folder]}
-        df_default = pd.concat([df_default, pd.DataFrame(data)])
-
-
 default_catalog_image = os.path.join(df_default.path.unique()[0], df_default.image.unique()[0])
-
-
-
-
-# Black Image Folder for Model Input
-
-image_pth = 'BlackImage'
-_filelocation = os.path.join(cwdir, image_pth)
-
-df_black = pd.DataFrame(columns=['image', 'path'])
-
-for _folder in [_filelocation]:
-    imglist_black = os.listdir(_folder)
-    print(_folder, ": ", len(imglist_black))
-    for _img in imglist_black:
-        data = {'image': [_img], 'path': [_folder]}
-        df_black = pd.concat([df_black, pd.DataFrame(data)])
-
-
 black_image = os.path.join(df_black.path.unique()[0], df_black.image.unique()[0])
 
 
@@ -262,10 +209,9 @@ _category_list = [ 'Bag', 'Shoe', 'Top', 'Outwear', 'Pant', 'Eyewear', 'Earring'
 
 
 
-
 # Category Folder
 df_category_all = {}
-num_of_images_in_each_catalog=28
+num_of_images_in_each_catalog=21
 i=0
 for cat in _category_list:
     _filelocation = os.path.join(cwdir, image_pth_catalog, cat)
@@ -279,8 +225,6 @@ for cat in _category_list:
 
     df_category_all[i] = df_category.head(num_of_images_in_each_catalog)
     i=i+1
-
-
 
 
 # Predicted Category Folder
@@ -302,7 +246,6 @@ for cat in _category_list:
 
 
 # Catalog
-
 def show_catalog(category_input,_label):
 
     df_temp_ = df_category_all[category_input].copy(deep=True)
@@ -315,7 +258,6 @@ def show_catalog(category_input,_label):
         use_container_width=False
     )
     return img
-
 
 def show_predicted(category_input, _label):
 
@@ -331,11 +273,253 @@ def show_predicted(category_input, _label):
     return img
 
 
+def show_predicted_actual(df_category_predicted_True, _label):
+
+    df_temp_ = df_category_predicted_True.copy(deep=True)
+    df_temp_['image_path'] = df_temp_['path'] + '/' + df_temp_['image']
+    _img_file_predicted = list(df_temp_['image_path'].unique())[:4]
+
+    img = image_select(
+        label=_label,
+        images=_img_file_predicted,
+        use_container_width=False
+    )
+    return img
 
 
 
 
-user_selected_image_list = ['']*8
+@st.cache_data
+def CNN_LSTM_score_prediction(model_input_selected_image_list):
+
+    # Create Unseen data in input format
+    df_unseen_data = convert_image_to_array(model_input_selected_image_list)
+
+    # Load Model
+    filepath1 = os.path.join(cwdir, 'model/model_compatibility_score')
+    # st.write(filepath1)
+    modelFileList = []
+    for modelFile in os.listdir(filepath1):
+        if modelFile.find('h5') > -1:
+            modelFileList.append(modelFile)
+
+    modelFileList = sorted(modelFileList)
+    modelFile = modelFileList[-1]
+    # st.write(os.path.join(filepath1, modelFile))
+
+    model_CNN_LSTM = load_model(os.path.join(filepath1, modelFile))
+
+    # Predict Compatibility
+    predicted_probability = model_CNN_LSTM.predict(df_unseen_data, verbose=0)
+
+    predicted_score = np.argmax(predicted_probability)
+
+    df_probability = pd.DataFrame(predicted_probability)
+    # st.write(df_probability)
+
+    label0 = df_probability.iloc[0, 0]
+    label1 = df_probability.iloc[0, 1]
+    label2 = df_probability.iloc[0, 2]
+    label3 = df_probability.iloc[0, 3]
+    cumscore123 = label1 + label2 + label3
+    cumscore12  = label1 + label2
+
+    # st.write(label0, label1, label2, label2)
+
+    if cumscore12 >= 0.3:
+        predicted_score = 1
+    elif cumscore12 >= 0.4:
+        predicted_score = 2
+    elif cumscore12 >= 0.4 and cumscore123 >= 0.5:
+        predicted_score = 3
+    else:
+        predicted_score = 0
+
+    # st.write("Probability : ", predicted_probability)
+    # st.write("Predicted Score : ", predicted_score)
+
+    return predicted_score
+
+@st.cache_data
+def convert_image_to_array(input_img_list):
+
+    df_temp = {'item_image_1': [input_img_list[0]],
+               'item_image_2': [input_img_list[1]],
+               'item_image_3': [input_img_list[2]],
+               'item_image_4': [input_img_list[3]],
+               'item_image_5': [input_img_list[4]],
+               'item_image_6': [input_img_list[5]],
+               'item_image_7': [input_img_list[6]],
+               'item_image_8': [input_img_list[7]]
+               }
+
+    dataset = pd.DataFrame(df_temp)
+
+    outfit_list = []
+
+    column_index = len(dataset.columns) - 1
+    valid_image_count = 0
+    dummy_image_count = 0
+    rpg_slash_const = "RGB"
+    img_size_for_model = 224
+
+    blank_image_array = np.zeros((img_size_for_model, img_size_for_model, 3), dtype=np.uint8)
+    blank_image = Image.fromarray(blank_image_array)
+    blank_image = blank_image.resize((img_size_for_model, img_size_for_model), Image.LANCZOS)
+
+    for index, row in dataset.iterrows():
+        outfit_data = []
+
+        for item_count in range(1, 9):
+            try:
+                image_path = dataset['item_image_' + str(item_count)].unique()[0]
+                image = Image.open(image_path).convert(rpg_slash_const)
+                image = image.resize((img_size_for_model, img_size_for_model), Image.LANCZOS)
+                valid_image_count = valid_image_count + 1
+            except:
+                image = blank_image
+                dummy_image_count = dummy_image_count + 1
+            datu = np.asarray(image)
+            normu_dat = datu / 255
+            outfit_data.append(normu_dat)
+
+        outfit_data = np.array(outfit_data)
+        outfit_list.append(outfit_data)
+
+    print("Num of real images = ", valid_image_count)
+    print("Num of dummy images = ", dummy_image_count)
+
+    return np.array(outfit_list)
+
+
+
+
+
+
+@st.cache_data
+def CNN_LSTM_image_prediction(cwdir, model_input_selected_image_list):
+
+    for i in range(4):
+        # Create Unseen data in input format
+        df_unseen_data = convert_image_to_array(model_input_selected_image_list)
+
+        # Load Model
+        filepath1 = os.path.join(cwdir, 'model/model_image_prediction')
+        # st.write(filepath1)
+        modelFileList = []
+        for modelFile in os.listdir(filepath1):
+            if modelFile.find('3.h5') > -1:
+                modelFileList.append(modelFile)
+
+        modelFileList = sorted(modelFileList)
+        modelFile = modelFileList[-1]
+        # st.write(os.path.join(filepath1, modelFile))
+
+        model_CNN_LSTM_image = load_model(os.path.join(filepath1, modelFile))
+
+        # Predict Compatibility
+        compatible_image = model_CNN_LSTM_image.predict(df_unseen_data, verbose=0)
+
+        img = compatible_image[0][7]
+        img = img * 250.0
+        img = Image.fromarray(img.astype(np.uint8))
+
+        image_pth_ = 'Image_Predicted'
+        image_filename = os.path.join(cwdir, image_pth_, "predicted_image_"+str(i)+".png")
+        img.save(image_filename)
+
+
+    # True_Predicted Category Folder
+    df_category_predicted_True = read_folder_images(cwdir, foldername='Image_Predicted')
+
+    return df_category_predicted_True
+
+
+
+
+@st.cache_data
+def highlight_predicted_image(val_i, pos_col, axes_, _img_file):
+
+    axes_[pos_col].imshow(mpimg.imread(_img_file))
+    axes_[pos_col].set_title('recommended item')
+
+    axes_[pos_col].set_xticklabels([])
+    axes_[pos_col].set_yticklabels([])
+
+    axes_[pos_col].set_xticks([])
+    axes_[pos_col].set_yticks([])
+
+    axes_[pos_col].spines['bottom'].set_color('red')
+    axes_[pos_col].spines['top'].set_color('red')
+    axes_[pos_col].spines['left'].set_color('red')
+    axes_[pos_col].spines['right'].set_color('red')
+
+
+
+
+def outfit_summary_and_purchase(_predicted_image, user_selected_image_list):
+
+    st.markdown(f'<br>', unsafe_allow_html=True)
+    browseText = '<p style="background-color:white;color:black; font-size: 20px;"><b>Outfit Summary</b></p>'
+    st.markdown(browseText, unsafe_allow_html=True)
+    st.markdown(
+        f'<p style="background-color:#ec4c8c;font-size:2px;"><b><a style= color: #daa520" href="" target="_self" >-</a></b></p></center>',
+        unsafe_allow_html=True)
+
+    col_, row_ = 9, 1
+    fig_, axes_ = plt.subplots(row_, col_, figsize=(16, 4))
+    plt.rcParams["figure.autolayout"] = True
+
+    i = 0
+
+    for pos_col in range(col_):
+        try:
+            axes_[pos_col].imshow(mpimg.imread(user_selected_image_list[i]))
+            axes_[pos_col].set_title(str(_category_list[i]))
+            # axes_[pos_col].axis('off')
+            axes_[pos_col].set_xticklabels([])
+            axes_[pos_col].set_yticklabels([])
+
+            axes_[pos_col].set_xticks([])
+            axes_[pos_col].set_yticks([])
+
+            axes_[pos_col].spines['bottom'].set_color('lightgrey')
+            axes_[pos_col].spines['top'].set_color('lightgrey')
+            axes_[pos_col].spines['left'].set_color('lightgrey')
+            axes_[pos_col].spines['right'].set_color('lightgrey')
+
+        except:
+
+            if i == 8:
+                highlight_predicted_image(i, pos_col, axes_, _predicted_image)
+            else:
+                axes_[pos_col].imshow(mpimg.imread(placeholder_image))
+                axes_[pos_col].set_title('')
+                axes_[pos_col].axis('off')
+
+        i = i + 1
+
+    st.pyplot(fig_)
+
+    st.markdown(f'<br>', unsafe_allow_html=True)
+    st.markdown(
+        f'<p style="background-color:#ec4c8c;font-size:2px;"><b><a style= color: #daa520" href="" target="_self" >-</a></b></p></center>',
+        unsafe_allow_html=True)
+
+    col11, col12, col13, col14, col15, col16 = st.columns(6)
+    with col11:
+        st.markdown(
+            f'<center><p style="background-color:#ec4c8c;color:white;font-size:18px;"> Proceed to Check Out </p></center>',
+            unsafe_allow_html=True)
+
+
+
+
+
+
+
+
+
 
 col0, col1 = st.columns(2)
 
@@ -411,6 +595,8 @@ with col0:
 
 
 
+
+
 with col1:
 
     col_, row_ = 1, 8
@@ -439,127 +625,13 @@ with col1:
     st.markdown(snapshot_text, unsafe_allow_html=True)
     st.pyplot(fig_1)
 
-
-
-
-    def convert_image_to_array(input_img_list):
-
-        df_temp = {'item_image_1': [input_img_list[0]],
-                   'item_image_2': [input_img_list[1]],
-                   'item_image_3': [input_img_list[2]],
-                   'item_image_4': [input_img_list[3]],
-                   'item_image_5': [input_img_list[4]],
-                   'item_image_6': [input_img_list[5]],
-                   'item_image_7': [input_img_list[6]],
-                   'item_image_8': [input_img_list[7]]
-                   }
-
-        dataset = pd.DataFrame(df_temp)
-
-        outfit_list = []
-
-        column_index = len(dataset.columns) - 1
-        valid_image_count = 0
-        dummy_image_count = 0
-        rpg_slash_const = "RGB"
-
-        blank_image_array = np.zeros((250, 250, 3), dtype=np.uint8)
-        blank_image = Image.fromarray(blank_image_array)
-        blank_image = blank_image.resize((250, 250), Image.LANCZOS)
-
-        for index, row in dataset.iterrows():
-            outfit_data = []
-
-            for item_count in range(1, 9):
-                try:
-                    image_path = dataset['item_image_' + str(item_count)].unique()[0]
-                    image = Image.open(image_path).convert(rpg_slash_const)
-                    image = image.resize((250, 250), Image.LANCZOS)
-                    valid_image_count = valid_image_count + 1
-                except:
-                    image = blank_image
-                    dummy_image_count = dummy_image_count + 1
-                datu = np.asarray(image)
-                normu_dat = datu / 255
-                outfit_data.append(normu_dat)
-
-            outfit_data = np.array(outfit_data)
-            outfit_list.append(outfit_data)
-
-        print("Num of real images = ", valid_image_count)
-        print("Num of dummy images = ", dummy_image_count)
-
-        return np.array(outfit_list)
-
-
-
-    def CNN_LSTM_score_prediction(model_input_selected_image_list):
-
-        # Create Unseen data in input format
-        df_unseen_data = convert_image_to_array(model_input_selected_image_list)
-
-        # Load Model
-        filepath1 = os.path.join(cwdir, 'model/model_compatibility_score')
-        # st.write(filepath1)
-        modelFileList = []
-        for modelFile in os.listdir(filepath1):
-            if modelFile.find('h5') > -1:
-                modelFileList.append(modelFile)
-
-        modelFileList = sorted(modelFileList)
-        modelFile = modelFileList[-1]
-        # st.write(os.path.join(filepath1, modelFile))
-
-        model_CNN_LSTM = load_model(os.path.join(filepath1, modelFile))
-
-        # Predict Compatibility
-        predicted_probability = model_CNN_LSTM.predict(df_unseen_data, verbose=0)
-
-        predicted_score = np.argmax(predicted_probability)
-
-        df_probability = pd.DataFrame(predicted_probability)
-        # st.write(df_probability)
-
-        label0 = df_probability.iloc[0, 0]
-        label1 = df_probability.iloc[0, 1]
-        label2 = df_probability.iloc[0, 2]
-        label3 = df_probability.iloc[0, 3]
-        cumscore123 = label1 + label2 + label3
-        cumscore12  = label1 + label2
-
-        # st.write(label0, label1, label2, label2)
-
-        if cumscore12 >= 0.3:
-            predicted_score = 1
-        elif cumscore12 >= 0.4:
-            predicted_score = 2
-        elif cumscore12 >= 0.4 and cumscore123 >= 0.5:
-            predicted_score = 3
-        else:
-            predicted_score = 0
-
-        # st.write("Probability : ", predicted_probability)
-        # st.write("Predicted Score : ", predicted_score)
-
-        return predicted_score
-
-
-
-
-    try:
-        score = CNN_LSTM_score_prediction(user_selected_image_list)
-    except:
-        score = random.randint(1, 4)
-        st.write('Dummy results')
-
-    rating = score
-
-    # dummy
-    cat_num = (rating)*3
-
     uploaded_cnt = len(list(set(model_input_selected_image_list)))-1
 
-    if uploaded_cnt >= 5 :
+    if uploaded_cnt >= 3:
+
+        score = CNN_LSTM_score_prediction(user_selected_image_list)
+        rating = score
+        cat_num = rating * 3
 
         compatibility = 'NA'
 
@@ -595,103 +667,35 @@ with col1:
 
 
     else:
-        st.write('Please select atleast 5 outfit items to get compatibility score!')
+        st.write('Please select atleast 3 outfit items to get compatibility score!')
 
 
 
-
-def highlight_predicted_image(val_i, pos_col, axes_, _img_file):
-
-    axes_[pos_col].imshow(mpimg.imread(_img_file))
-    axes_[pos_col].set_title('recommended item')
-
-    axes_[pos_col].set_xticklabels([])
-    axes_[pos_col].set_yticklabels([])
-
-    axes_[pos_col].set_xticks([])
-    axes_[pos_col].set_yticks([])
-
-    axes_[pos_col].spines['bottom'].set_color('red')
-    axes_[pos_col].spines['top'].set_color('red')
-    axes_[pos_col].spines['left'].set_color('red')
-    axes_[pos_col].spines['right'].set_color('red')
-
-
-
-
-
-def outfit_summary_and_purchase(_predicted_image):
-
-    st.markdown(f'<br>', unsafe_allow_html=True)
-    browseText = '<p style="background-color:white;color:black; font-size: 20px;"><b>Outfit Summary</b></p>'
-    st.markdown(browseText, unsafe_allow_html=True)
-    st.markdown(
-        f'<p style="background-color:#ec4c8c;font-size:2px;"><b><a style= color: #daa520" href="" target="_self" >-</a></b></p></center>',
-        unsafe_allow_html=True)
-
-    col_, row_ = 9, 1
-    fig_, axes_ = plt.subplots(row_, col_, figsize=(16, 4))
-    plt.rcParams["figure.autolayout"] = True
-
-    i = 0
-
-    for pos_col in range(col_):
-        try:
-            axes_[pos_col].imshow(mpimg.imread(user_selected_image_list[i]))
-            axes_[pos_col].set_title(str(_category_list[i]))
-            # axes_[pos_col].axis('off')
-            axes_[pos_col].set_xticklabels([])
-            axes_[pos_col].set_yticklabels([])
-
-            axes_[pos_col].set_xticks([])
-            axes_[pos_col].set_yticks([])
-
-            axes_[pos_col].spines['bottom'].set_color('lightgrey')
-            axes_[pos_col].spines['top'].set_color('lightgrey')
-            axes_[pos_col].spines['left'].set_color('lightgrey')
-            axes_[pos_col].spines['right'].set_color('lightgrey')
-
-        except:
-
-            if i == 8:
-                highlight_predicted_image(i, pos_col, axes_, _predicted_image)
-            else:
-                axes_[pos_col].imshow(mpimg.imread(placeholder_image))
-                axes_[pos_col].set_title('')
-                axes_[pos_col].axis('off')
-
-        i = i + 1
-
-    st.pyplot(fig_)
-
-    st.markdown(f'<br>', unsafe_allow_html=True)
-    st.markdown(
-        f'<p style="background-color:#ec4c8c;font-size:2px;"><b><a style= color: #daa520" href="" target="_self" >-</a></b></p></center>',
-        unsafe_allow_html=True)
-
-    col11, col12, col13, col14, col15, col16 = st.columns(6)
-    with col11:
-        st.markdown(
-            f'<center><p style="background-color:#ec4c8c;color:white;font-size:18px;"> Proceed to Check Out </p></center>',
-            unsafe_allow_html=True)
-
-
-
-
-if uploaded_cnt >= 5:
+if uploaded_cnt >= 3:
 
     # Below is the New Item Suggestion section
 
     st.markdown(f'<br><br>', unsafe_allow_html=True)
-    st.markdown(f'<center><p style="background-color:#ec4c8c;color:white;font-size:20px;"><b> Recommending a Best matching outfit item </b>  </p></center>', unsafe_allow_html=True)
+    st.markdown(f'<center><p style="background-color:#ec4c8c;color:white;font-size:20px;"><b> (Planned) Recommending a Best matching outfit item </b>  </p></center>', unsafe_allow_html=True)
 
     colpred1, colpred2 = st.columns(2)
     # with colpred1:
         # st.pyplot(fig_pred)
-    new_item_image = show_predicted(cat_num, "We have recommendeded Best four items for you which may go well with the chosen outfit. Please Choose one. ".format(_category_list[cat_num]))
 
-    predicted_image = new_item_image
-    outfit_summary_and_purchase(predicted_image)
+    label_for_pred = "We have recommendeded Best four items for you which may go well with the chosen outfit. Please Choose one. "
+
+
+    new_item_image = show_predicted(cat_num,label_for_pred.format(_category_list[cat_num]))
+    outfit_summary_and_purchase(new_item_image, user_selected_image_list)
+
+
+    st.markdown(f'<br><br><br>', unsafe_allow_html=True)
+    st.markdown(f'<center><p style="background-color:#ec4c8c;color:white;font-size:20px;"><b> (Actual) Recommending a Best matching outfit item </b>  </p></center>', unsafe_allow_html=True)
+
+    df_category_predicted_True = CNN_LSTM_image_prediction(cwdir, user_selected_image_list)
+    predicted_image = show_predicted_actual(df_category_predicted_True, _label= label_for_pred)
+    outfit_summary_and_purchase(predicted_image, user_selected_image_list)
+
 
 
 
