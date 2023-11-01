@@ -689,12 +689,12 @@ if uploaded_cnt >= 3:
     outfit_summary_and_purchase(new_item_image, user_selected_image_list)
 
 
-    st.markdown(f'<br><br><br>', unsafe_allow_html=True)
-    st.markdown(f'<center><p style="background-color:#ec4c8c;color:white;font-size:20px;"><b> (Actual) Recommending a Best matching outfit item </b>  </p></center>', unsafe_allow_html=True)
-
-    df_category_predicted_True = CNN_LSTM_image_prediction(cwdir, user_selected_image_list)
-    predicted_image = show_predicted_actual(df_category_predicted_True, _label= label_for_pred)
-    outfit_summary_and_purchase(predicted_image, user_selected_image_list)
+    # st.markdown(f'<br><br><br>', unsafe_allow_html=True)
+    # st.markdown(f'<center><p style="background-color:#ec4c8c;color:white;font-size:20px;"><b> (Actual) Recommending a Best matching outfit item </b>  </p></center>', unsafe_allow_html=True)
+    #
+    # df_category_predicted_True = CNN_LSTM_image_prediction(cwdir, user_selected_image_list)
+    # predicted_image = show_predicted_actual(df_category_predicted_True, _label= label_for_pred)
+    # outfit_summary_and_purchase(predicted_image, user_selected_image_list)
 
 
 
